@@ -1,0 +1,39 @@
+package org.firstinspires.ftc.teamcode.teleop;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.subsystems.Indexer;
+import org.firstinspires.ftc.teamcode.subsystems.SwerveDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.utility.Encoder;
+
+@TeleOp(name = "SwerveTeleOp", group = "Linear Opmode")
+public class SwerveTeleOp extends LinearOpMode {
+    @Override
+    public void runOpMode() {
+        MultipleTelemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+        TelemetryReporter telemetryReporter = new TelemetryReporter(telemetry);
+
+        SwerveDrive swerve = new SwerveDrive(telemetry, hardwareMap, true);
+        DriveController driveController = new DriveController(swerve);
+
+        Turret turret = new Turret(hardwareMap);
+        Indexer indexer = new Indexer(hardwareMap);
+        ManipulatorController manipulatorController = new ManipulatorController(turret, indexer);
+
+
+        telemetryReporter.addInitializationStatus();
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            DriveController.DriveState driveState = driveController.driveWithGamepad(gamepad1);
+            ManipulatorController.ManipulatorState manipulatorState = manipulatorController.updateFromGamepad(gamepad2);
+
+        }
+    }
+}
